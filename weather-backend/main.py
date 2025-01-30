@@ -17,6 +17,10 @@ app.add_middleware(
 
 create_db_and_tables()
 
+@app.get("/")
+async def health_check():
+    return "The health check is successful!"
+
 # Example /weather-app/weather?city=New+York
 @app.post("/weather-app/favorites")
 async def save_favorite(city: str, db: Session = Depends(get_db)):
