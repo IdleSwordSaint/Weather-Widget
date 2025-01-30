@@ -1,32 +1,35 @@
-import sqlite3
+from sqlalchemy import Column, Integer, String, DateTime, func, create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
-# Ensure the filename is consistent throughout
-DATABASE_FILE = "db.sqlite3"  # Rename your file appropriately
+DATABASE_URL = "sqlite:///./db.sqlite3"
+
+Base = declarative_base()
+engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+
+class Favorite(Base):
+    __tablename__ = "favorites"
+
+    id = Column(Integer, primary_key=True, index=True)
+    city_name = Column(String, unique=True, nullable=False)
+    added_on = Column(DateTime, server_default=func.now())
+
+class Location(Base):
+    __tablename__ = "cities"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, nullable=False)
+    longitude = Column(Integer, nullable=False)
+    latitude = Column(Integer, nullable=False)
 
 def create_db_and_tables():
-    conn = sqlite3.connect(DATABASE_FILE)
-    cursor = conn.cursor()
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS favorites (
-        id INTEGER PRIMARY KEY,
-        city_name TEXT UNIQUE,
-        added_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )
-    """)
-    conn.commit()
-    conn.close()
+    Base.metadata.create_all(bind=engine)
 
-def add_favorite(city: str):
-    conn = sqlite3.connect(DATABASE_FILE)
-    cursor = conn.cursor()
-    cursor.execute("INSERT OR IGNORE INTO favorites (city_name) VALUES (?)", (city,))
-    conn.commit()
-    conn.close()
 
-def get_favorites():
-    conn = sqlite3.connect(DATABASE_FILE)
-    cursor = conn.cursor()
-    cursor.execute("SELECT city_name FROM favorites")
-    cities = [row[0] for row in cursor.fetchall()]
-    conn.close()
-    return cities
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
