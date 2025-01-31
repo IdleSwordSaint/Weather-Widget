@@ -52,7 +52,7 @@ async def get_location(city: str, db: Session = Depends(get_db)):
     return {"name": location.name, "latitude": location.latitude, "longitude": location.longitude}
 
 # Example /weather-app/weather?city=New+York
-@app.get("/weather-app/get-weather")
+@app.get("/weather-app/get-weather/{city}")
 async def get_weather(city: str, db: Session = Depends(get_db)):
     print(city)
     location = db.query(Location).filter(Location.name == city).first()
