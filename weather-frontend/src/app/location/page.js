@@ -25,7 +25,7 @@ export default function LocationPage() {
 
   const fetchLocations = async () => {
     try {
-      const res = await fetch("http://localhost:8000/weather-app/locations/all");
+      const res = await fetch("https://weather-backend-sand.vercel.app/weather-app/locations/all");
       if (!res.ok) throw new Error("Failed to fetch locations");
       const data = await res.json();
       setLocations(data);
@@ -36,7 +36,7 @@ export default function LocationPage() {
 
   const addLocation = async () => {
     try {
-      const url = new URL("http://localhost:8000/weather-app/add-location");
+      const url = new URL("https://weather-backend-sand.vercel.app/weather-app/add-location");
       url.searchParams.append("city", newCity);
       url.searchParams.append("lat", parseFloat(lat));
       url.searchParams.append("long", parseFloat(long));
@@ -58,7 +58,7 @@ export default function LocationPage() {
 
   const removeLocation = async (city) => {
     try {
-      const res = await fetch(`http://localhost:8000/weather-app/remove-location/${city}`, {
+      const res = await fetch(`https://weather-backend-sand.vercel.app/weather-app/remove-location/${city}`, {
         method: "DELETE",
       });
       if (!res.ok) throw new Error("Failed to remove location");

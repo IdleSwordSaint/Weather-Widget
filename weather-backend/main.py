@@ -61,21 +61,8 @@ async def get_weather(city: str, db: Session = Depends(get_db)):
 
 @app.put("/weather-app/update-location")
 async def update_location(city: str, lat: int, long: int, db: Session = Depends(get_db)):
-    location = db.query(Location).filter(Location.name == city).first()
-    if not location:
-        raise HTTPException(status_code=404, detail="Location not found")
-
-    location.latitude = lat
-    location.longitude = long
-    db.commit()
-    return JSONResponse(status_code=200, content={"message": f"Location {city} updated successfully"})
+    pass
 
 @app.delete("/weather-app/remove-location/{city}")
 async def remove_location(city: str, db: Session = Depends(get_db)):
-    location = db.query(Location).filter(Location.name == city).first()
-    if not location:
-        raise HTTPException(status_code=404, detail="Location not found")
-
-    db.delete(location)
-    db.commit()
-    return JSONResponse(status_code=200, content={"message": ""})
+    pass
