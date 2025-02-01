@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
-from models import create_db_and_tables, get_db, Favorite, Location
+from models import create_db_and_tables, get_db, Location
 from api import fetch_weather
 from starlette.responses import JSONResponse
 
@@ -20,7 +20,7 @@ create_db_and_tables()
 
 @app.get("/")
 async def health_check():
-    return "The health check is successful!"
+    return "The health check is successful! The website is functioning properly."
 
 # Example /weather-app/weather?city=New+York
 @app.get("/weather-app/locations/all")
@@ -78,4 +78,4 @@ async def remove_location(city: str, db: Session = Depends(get_db)):
 
     db.delete(location)
     db.commit()
-    return JSONResponse(status_code=204, content={"message": ""})
+    return JSONResponse(status_code=200, content={"message": ""})
