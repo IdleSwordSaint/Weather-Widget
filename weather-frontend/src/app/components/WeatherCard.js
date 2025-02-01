@@ -4,7 +4,6 @@ export default function WeatherCard({ weather }) {
         {/* Title Section */}
         <div className="col-span-2 text-center">
           <h2 className="text-3xl font-semibold text-gray-900 dark:text-white font-pricedown">{weather.city}</h2>
-          <p className="text-gray-500 text-lg dark:text-gray-300">{weather.description}</p>
         </div>
         
         {/* Temperature Section */}

@@ -8,7 +8,6 @@ import WeatherCard from "./components/WeatherCard"; // Use relative path here
 export default function Page() {
   const [weather, setWeather] = useState({
     city: "San Francisco",
-    description: "Sunny",
     temperature: 25,
     humidity: 60,
     windSpeed: 10,
@@ -26,10 +25,25 @@ export default function Page() {
 
   const fetchWeather = async (city) => {
     try {
-      const res = await fetch(`http://127.0.0.1:8000/weather/${city}`);
-      if (!res.ok) throw new Error("City not found");
-      const data = await res.json();
-      setWeather(data);
+      // Fetch location (latitude & longitude)
+      const locationRes = await fetch(`http://127.0.0.1:8000/weather-app/locations/${city}`);
+      if (!locationRes.ok) throw new Error("City not found");
+      const locationData = await locationRes.json();
+      
+      // Fetch weather using the returned city name
+      const weatherRes = await fetch(`http://127.0.0.1:8000/weather-app/get-weather/${locationData.name}`);
+      if (!weatherRes.ok) throw new Error("Weather data not found");
+      const weatherData = await weatherRes.json();
+  
+      // Update state with required weather properties
+      setWeather({
+        city: locationData.name,
+        temperature: weatherData.temperatureAvg,
+        humidity: weatherData.humidityAvg,
+        windSpeed: weatherData.windSpeedAvg,
+        pressure: weatherData.pressureSurfaceLevelAvg,
+      });
+  
     } catch (error) {
       console.error(error.message);
       setWeather(null); // Clear previous data on error
