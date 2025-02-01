@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FaSun, FaMoon } from "react-icons/fa";
+import { FaSun, FaMoon, FaMapMarkerAlt } from "react-icons/fa";
+import Link from "next/link";
 import SearchBar from "./components/SearchBar";   // Use relative path here
 import WeatherCard from "./components/WeatherCard"; // Use relative path here
 
@@ -25,17 +26,14 @@ export default function Page() {
 
   const fetchWeather = async (city) => {
     try {
-      // Fetch location (latitude & longitude)
-      const locationRes = await fetch(`http://127.0.0.1:8000/weather-app/locations/${city}`);
+      const locationRes = await fetch(`http://localhost:8000/weather-app/locations?city=${city}`);
       if (!locationRes.ok) throw new Error("City not found");
       const locationData = await locationRes.json();
       
-      // Fetch weather using the returned city name
-      const weatherRes = await fetch(`http://127.0.0.1:8000/weather-app/get-weather/${locationData.name}`);
+      const weatherRes = await fetch(`http://localhost:8000/weather-app/get-weather/${locationData.name}`);
       if (!weatherRes.ok) throw new Error("Weather data not found");
       const weatherData = await weatherRes.json();
   
-      // Update state with required weather properties
       setWeather({
         city: locationData.name,
         temperature: weatherData.temperatureAvg,
@@ -46,7 +44,7 @@ export default function Page() {
   
     } catch (error) {
       console.error(error.message);
-      setWeather(null); // Clear previous data on error
+      setWeather(null);
     }
   };
 
@@ -54,12 +52,16 @@ export default function Page() {
     <>
       <header className="bg-black text-white py-6 flex justify-between items-center px-6 dark:bg-black">
         <h1 className="text-4xl font-bold font-pricedown">Weather App</h1>
-        <button
-          onClick={() => setDarkMode(!darkMode)}
-          className="text-2xl"
-        >
-          {darkMode ? <FaSun className="text-yellow-500" /> : <FaMoon className="text-gray-500" />}
-        </button>
+        <div className="flex items-center">
+          <button onClick={() => setDarkMode(!darkMode)} className="text-2xl mr-4">
+            {darkMode ? <FaSun className="text-yellow-500" /> : <FaMoon className="text-gray-500" />}
+          </button>
+          <Link href="/location">
+            <button className="text-2xl">
+              <FaMapMarkerAlt className="text-blue-500" />
+            </button>
+          </Link>
+        </div>
       </header>
       <main className="container mx-auto p-6 bg-gray-100 text-black min-h-screen dark:bg-black dark:text-white">
         <SearchBar onSearch={fetchWeather} />
@@ -71,7 +73,7 @@ export default function Page() {
           </p>
         )}
       </main>
-      <footer className="g-black text-white py-4 text-center dark:bg-black-100 dark:text-black">
+      <footer className="bg-black text-white py-4 text-center dark:bg-black">
         © 2025 Weather App
       </footer>
     </>
